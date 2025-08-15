@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Australia Trip Itinerary</title>
+    <style>
+        /* Modern, pastel travel-magazine styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Montserrat', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            overflow: hidden;
+            touch-action: pan-y;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            height: 100%;
+            max-height: 900px;
+            position: relative;
+            overflow: hidden;
+            margin: auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .cards-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.3s ease-out;
+        }
+        
+        .card {
+            min-width: 100%;
+            height: 100%;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-content {
+            height: 100%;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .scrollable-content {
+            overflow-y: auto;
+            flex: 1;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .swipe-instruction {
+            text-align: center;
+            margin-top: auto;
+            padding-top: 10px;
+            color: #888;
+            font-size: clamp(12px, 3vw, 13px);
+        }
+        
+        /* Pastel color themes for each destination */
+        .cover-section { 
+            background: linear-gradient(135deg, #6a7fdb 0%, #2a4b7c 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .brisbane-section { background: #f8e9e9; } /* Soft pink */
+        .byron-section { background: #e9f0f8; } /* Soft blue */
+        .hobart-section { background: #e9f8f7; } /* Soft teal */
+        .sydney-section { background: #f0e9f8; } /* Soft lavender */
+        .jervis-section { background: #e9f8ed; } /* Soft mint */
+        .sydney-final-section { background: #f8f4e9; } /* Soft beige */
+        .game-section { background: #f0f4ff; } /* Light blue */
+        
+        .location-title {
+            font-size: clamp(18px, 5vw, 20px);
+            font-weight: 700;
+            color: #2a4b7c;
+            margin-bottom: 4px;
+        }
+        
+        .location-dates {
+            font-size: clamp(12px, 3vw, 13px);
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .location-dates span {
+            background: rgba(255,255,255,0.7);
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-right: 5px;
+            font-size: clamp(10px, 3vw, 11px);
+        }
+        
+        .location-desc {
+            font-size: clamp(13px, 3.5vw, 14px);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        
+        .activities-list {
+            margin-left: 15px;
+            padding-left: 5px;
+            margin-bottom: 12px;
+        }
+        
+        .activities-list li {
+            margin-bottom: 5px;
+            font-size: clamp(12px, 3.5vw, 13px);
+        }
+        
+        .highlights-title {
+            font-size: clamp(14px, 4vw, 15px);
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 3px;
+        }
+        
+        .highlights-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .highlight-item {
+            background: white;
+            border-radius: 8px;
+            padding: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .highlight-image-container {
+            width: 100%;
+            aspect-ratio: 4/3;
+            overflow: hidden;
+            border-radius: 6px;
+            margin-bottom: 3px;
+        }
+        
+        .highlight-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .highlight-item p {
+            font-size: clamp(10px, 3vw, 11px);
+            margin: 0;
+            color: #555;
+            text-align: center;
+        }
+        
+        .itinerary-image-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 10px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .itinerary-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .budget-box {
+            background: #f0f4ff;
+            border-radius: 12px;
+            padding: 10px;
+            margin-top: 12px;
+            text-align: center;
+        }
+        
+        .budget-title {
+            font-size: clamp(14px, 4vw, 15px);
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #2a4b7c;
+        }
+        
+        .budget-link {
+            display: inline-block;
+            margin-top: 4px;
+            color: #6a7fdb;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: clamp(12px, 3vw, 13px);
+        }
+        
+        .nav-dots {
+            position: absolute;
+            bottom: 8px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            z-index: 100;
+        }
+        
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ccc;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .dot.active {
+            background: #6a7fdb;
+        }
+        
+        /* Game Card Styling */
+        .game-question {
+            text-align: center;
+            font-size: clamp(22px, 6vw, 28px);
+            font-weight: 700;
+            color: #2a4b7c;
+            margin-bottom: 10px;
+        }
+        
+        .game-subtext {
+            text-align: center;
+            font-size: clamp(14px, 4vw, 16px);
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .game-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: auto;
+        }
+        
+        .game-button {
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: clamp(16px, 4vw, 18px);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s;
+        }
+        
+        .game-button:active {
+            transform: scale(0.95);
+        }
+        
+        .game-button.yes {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .game-button.no {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        /* Cover Page Styling */
+        .cover-image-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 1;
+        }
+        
+        .cover-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .cover-text {
+            font-size: clamp(24px, 7vw, 32px);
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f44336;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
+        /* Hide scrollbar but keep functionality */
+        .scrollable-content::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="toast" id="toast">Oops! That seems to be the wrong answer. Please try again.</div>
+    
+    <div class="container">
+        <div class="cards-container" id="cardsContainer">
+        <!-- Cover Page -->
+            <div class="card">
+                <div class="card-content" style="background: transparent; box-shadow: none; padding: 0; position: relative;">
+                    <!-- Heading at top -->
+                    <div style="position: absolute; top: 30px; left: 0; right: 0; z-index: 2; text-align: center;">
+                        <div class="cover-text" style="color: #333; text-shadow: none; font-size: 28px; font-weight: 800;">Australian Adventure</div>
+                    </div>
+                    
+                    <!-- Full-height image -->
+                    <div class="cover-image-container" style="height: 100%; width: 100%;">
+                        <img src="https://i.postimg.cc/jS0BL3jQ/Your-paragraph-text-1.jpg" alt="Australia Cover" 
+                            style="object-fit: contain; width: 100%; height: 100%;">
+                    </div>
+                    
+                    <!-- Swipe instructions at bottom -->
+                    <div class="swipe-instruction" style="position: absolute; bottom: 30px; left: 0; right: 0; text-align: center; z-index: 2;">
+                        Swipe left to start this Adventure!
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Brisbane -->
+            <div class="card">
+                <div class="card-content brisbane-section">
+                    <div class="scrollable-content">
+                        <div class="location-title">Brisbane</div>
+                        <div class="location-dates">Dec 20 <span>Day 1</span></div>
+                        <div class="location-desc">
+                            <ul class="activities-list">
+                                <li>Mt Coot-tha Lookout for panoramic views</li>
+                                <li>Leisurely walk through the Brisbane Botanic Gardens</li>
+                                <li>Walk along the Brisbane River</li>
+                            </ul>
+                            <strong>Vegan Eats:</strong> Grown Cafe, The Green Edge
+                        </div>
+                        <div class="itinerary-image-container">
+                            <img src="https://i.postimg.cc/QxGPVWF2/Brisbane1.jpg" alt="Brisbane">
+                        </div>
+                        <div class="highlights-title">Highlights</div>
+                        <div class="highlights-grid">
+                            <div class="highlight-item">
+                                <div class="highlight-image-container">
+                                    <img src="https://i.postimg.cc/Pr7gbr5H/christian-von-koenig-h-IP9-NQHAZ1w-unsplash.jpg" alt="Brisbane Botanic Gardens">
+                                </div>
+                                <p>Botanic Gardens</p>
+                            </div>
+                            <div class="highlight-item">
+                                <div class="highlight-image-container">
+                                    <img src="https://i.postimg.cc/63zS8BmD/pixels-of-life-Xvz-Cn-A8-Boss-unsplash.jpg" alt="Brisbane River Walk">
+                                </div>
+                                <p>Riverside Walks</p>
+                            </div>
+                        </div>
+                        <div class="swipe-instruction">← Swipe right for Cover | Swipe left for Byron Bay →</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Byron Bay -->
+            <div class="card">
+                <div class="card-content byron-section">
+                    <div class="scrollable-content">
+                        <div class="location-title">Byron Bay</div>
+                        <div class="location-dates">Dec 21–23 <span>Day 2-4</span></div>
+                        <div class="location-desc">
+                            <ul class="activities-list">
+                                <li>Cape Byron Lighthouse hike</li>
+                                <li>Relax at Tallow Beach and The Pass</li>
+                                <li>Dolphin or whale watching cruise</li>
+                                <li>Day trip to Minyon Falls Loop (moderate hike)</li>
+                            </ul>
+                            <strong>Vegan Eats:</strong> No Bones, Manna Haven Cafe, Yulli's Byron Bay
+                        </div>
+                        <div class="itinerary-image-container">
+                            <img src="https://i.postimg.cc/VNGpNGtg/Byron-Bay-1.jpg" alt="Byron Bay">
+                        </div>
+                        <div class="highlights-title">Highlights</div>
+                        <div class="highlights-grid">
+                            <div class="highlight-item">
+                                <div class="highlight-image-container">
+                                    <img src="https://i.postimg.cc/s24HLVsv/ross-sokolovski-OH-1i-Lu-TCw-unsplash.jpg" alt="Tallow Beach">
+                                </div>
+                                <p>Tallow Beach Relaxation</p>
+                            </div>
+                            <div class="highlight-item">
+                                <div class="highlight-image-container">
+                                    <img src="https://i.postimg.cc/FskW4bht/douglas-lima-C9fb-g-Z0r3c-unsplash.jpg" alt="Wildlife">
+                                </div>
+                                <p>Wildlife Spotting</p>
+                            </div>
+                        </div>
+                        <div class="swipe-instruction">← Swipe right for Brisbane | Swipe left for Hobart →</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hobart -->
+            <div class="card">
+                <div class="card-content hobart-section">
+                    <div class="scrollable-content">
+                        <div class="location-title">Hobart, Tasmania</div>
+                        <div class="location-dates">Dec 24–26 <span>Day 5-7</span></div>
+                        <div class="location-desc">
+                            <ul class="activities-list">
+                                <li>Explore Salamanca Market (Saturday)</li>
+                                <li>Drive to summit of kunanyi/Mt Wellington</li>
+                                <li>Day trip to Freycinet National Park: Wineglass Bay Lookout</li>
+                                <li>Day trip to Bruny Island: The Neck Lookout</li>
+                            </ul>
+                            <strong>Vegan Eats:</strong> Veg Bar, Aloft (special occasion), Little Lotus Cafe
+                        </div>
+                        <div class="itinerary-image-container">
+                            <img src="https://i.postimg.cc/CMfXF4xC/Hobart.jpg" alt="Hobart">
+                        </div>
+                        <div class="highlights-title">Highlights</div>
+                        <div class="highlights-grid">
+                            <div class="highlight-item">
+                                <div class="highlight-image-container">
+                                    <img src="https://i.postimg.cc/DzMphWVY/wineglass-bay.jpg" alt="Freycinet National Park">
+                                </div>
+                                <p>Wineglass Bay Lookout</p>
+                            </div>
+                            <div class="highlight-item">
+                                <div class="highlight-image-container">
+                                    <img src="https://i.postimg.cc/t4DmrSBb/neck.jpg" alt="Bruny Island">
+                                </div>
+                                <p>Bruny Island Views</p>
+                            </div>
+                        </div>
+                        <div class="swipe-instruction">← Swipe right for Byron Bay | Swipe left for Sydney →</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sydney & Blue Mountains -->
+            <div class="card">
+                <div class="card-content sydney-section">
+                    <div class="scrollable-content">
+                        <div class="location-title">Sydney & Blue Mountains</div>
+                        <div class="location-dates">Dec 27–29 <span>Day 8-10</span></div>
+                        <div class="location-desc">
+                            <ul class="activities-list">
+                                <li>Visit Sydney Opera House and Circular Quay</li>
+                                <li>Coastal Walk from Bondi to Coogee</li>
+                                <li>Day trip to Blue Mountains: Wentworth Falls and Three Sisters</li>
+                                <li>Sydney Harbour Bridge Climb</li>
+                            </ul>
+                            <strong>Vegan Eats:</strong> Yellow, Rubyfruit (Blue Mountains), Gigi's Pizzeria
+                        </div>
+                        <div class="itinerary-image-container">
+                            <img src="https://i.postimg.cc/BnJVB9cN/sydney-opera-house.jpg" alt="Sydney Opera House">
+                        </div>
+                        <div class="highlights-title">Highlights</div>
+                        <div class="highlights-grid">
+                            <div class="highlight-item">
+                                <div class="highlight-image-container">
+                                    <img src="https://i.postimg.cc/0Qh4YzcJ/Bluemountains.jpg" alt="Blue Mountains">
+                                </div>
+                                <p>Three Sisters View</p>
+                            </div>
+                            <div class="highlight-item">
+                                <div class="highlight-image-container">
+                                    <img src="https://i.postimg.cc/9fLKMWSs/dominic-kurniawan-suryaputra-NDp-8cjh-R-M-unsplash.jpg" alt="Bondi Beach">
+                                </div>
+                                <p>Bondi to Coogee Walk</p>
+                            </div>
+                        </div>
+                        <div class="swipe-instruction">← Swipe right for Hobart | Swipe left for Jervis Bay →</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Jervis Bay -->
+            <div class="card">
+                <div class="card-content jervis-section">
+                    <div class="scrollable-content">
+                        <div class="location-title">Jervis Bay</div>
+                        <div class="location-dates">Dec 30–Jan 1 <span>Day 11-13</span></div>
+                        <div class="location-desc">
+                            <ul class="activities-list">
+                                <li>Relax on Hyams Beach</li>
+                                <li>Walk the White Sands Walk</li>
+                                <li>Dolphin spotting cruise</li>
+                                <li>New Year's Eve picnic at Booderee National Park</li>
+                            </ul>
+                            <strong>Vegan Eats:</strong> Pilgrims Vegetarian Cafe in Milton
+                        </div>
+                        <div class="itinerary-image-container">
+                            <img src="https://i.postimg.cc/9fgg2Lwh/daniel-tran-w-Wl-B-xqtmc-unsplash.jpg" alt="Jervis Bay">
+                        </div>
+                        <div class="highlights-title">Highlights</div>
+                        <div class="highlights-grid">
+                            <div class="highlight-item">
+                                <div class="highlight-image-container">
+                                    <img src="https://i.postimg.cc/RhfDXvDp/jervis-bay.jpg" alt="Hyams Beach">
+                                </div>
+                                <p>Hyams Beach</p>
+                            </div>
+                            <div class="highlight-item">
+                                <div class="highlight-image-container">
+                                    <img src="https://i.postimg.cc/BbHmxsYS/wynand-uys-0-32-AIxy1-Hk-unsplash.jpg" alt="Wildlife">
+                                </div>
+                                <p>Dolphin Spotting</p>
+                            </div>
+                        </div>
+                        <div class="swipe-instruction">← Swipe right for Sydney | Swipe left for Final Days →</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sydney & Departure -->
+            <div class="card">
+                <div class="card-content sydney-final-section">
+                    <div class="scrollable-content">
+                        <div class="location-title">Sydney & Departure</div>
+                        <div class="location-dates">Jan 2–3 <span>Day 14-15</span></div>
+                        <div class="location-desc">
+                            <ul class="activities-list">
+                                <li>Royal Botanic Gardens</li>
+                                <li>Ferry to Manly for city perspectives</li>
+                                <li>Final dinner in Sydney</li>
+                                <li>Fly out from Sydney to Bangalore on Jan 3rd</li>
+                            </ul>
+                        </div>
+                        <div class="itinerary-image-container">
+                            <img src="https://i.postimg.cc/BnJVB9cN/sydney-opera-house.jpg" alt="Sydney Harbour">
+                        </div>
+                        <div class="swipe-instruction">← Swipe right for Jervis Bay | Swipe left for Final Question →</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Game Card -->
+            <div class="card">
+                <div class="card-content game-section">
+                    <div class="scrollable-content">
+                        <div style="margin: auto; text-align: center;">
+                            <div class="game-question">Are you game?</div>
+                            <div class="game-options">
+                                <button class="game-button yes" id="yesButton">
+                                    <i class="fas fa-thumbs-up"></i> Yes
+                                </button>
+                                <button class="game-button no" id="noButton">
+                                    <i class="fas fa-thumbs-down"></i> No
+                                </button>
+                            </div>
+                        </div>
+                        <div class="swipe-instruction">← Swipe right for Sydney</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="nav-dots" id="navDots">
+            <div class="dot" data-index="0"></div>
+            <div class="dot" data-index="1"></div>
+            <div class="dot" data-index="2"></div>
+            <div class="dot" data-index="3"></div>
+            <div class="dot" data-index="4"></div>
+            <div class="dot" data-index="5"></div>
+            <div class="dot" data-index="6"></div>
+            <div class="dot" data-index="7"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cardsContainer = document.getElementById('cardsContainer');
+            const cards = document.querySelectorAll('.card');
+            const dots = document.querySelectorAll('.dot');
+            const yesButton = document.getElementById('yesButton');
+            const noButton = document.getElementById('noButton');
+            const toast = document.getElementById('toast');
+            let currentIndex = 0;
+            let startX = 0;
+            let isDragging = false;
+            
+            // Set initial position
+            updateCardsPosition();
+            dots[0].classList.add('active');
+            
+            // Touch events for mobile
+            cardsContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
+            cardsContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+            cardsContainer.addEventListener('touchend', handleTouchEnd);
+            
+            // Mouse events for desktop
+            cardsContainer.addEventListener('mousedown', handleMouseDown);
+            cardsContainer.addEventListener('mousemove', handleMouseMove);
+            cardsContainer.addEventListener('mouseup', handleMouseUp);
+            cardsContainer.addEventListener('mouseleave', handleMouseUp);
+            
+            // Dot navigation
+            dots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    goToCard(index);
+                });
+            });
+            
+            // Game card buttons
+            yesButton.addEventListener('click', shareOnWhatsApp);
+            noButton.addEventListener('click', showToast);
+            
+            function handleTouchStart(e) {
+                startX = e.touches[0].clientX;
+                isDragging = true;
+            }
+            
+            function handleTouchMove(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+                const x = e.touches[0].clientX;
+                const diff = startX - x;
+                
+                // Move the container temporarily during swipe
+                cardsContainer.style.transform = `translateX(calc(-${currentIndex * 100}% - ${diff}px))`;
+            }
+            
+            function handleTouchEnd(e) {
+                if (!isDragging) return;
+                isDragging = false;
+                
+                const endX = e.changedTouches[0].clientX;
+                const diff = startX - endX;
+                
+                // Determine if swipe was significant enough to change card
+                if (diff > 50 && currentIndex < cards.length - 1) {
+                    // Swipe left - next card
+                    goToCard(currentIndex + 1);
+                } else if (diff < -50 && currentIndex > 0) {
+                    // Swipe right - previous card
+                    goToCard(currentIndex - 1);
+                } else {
+                    // Return to current card
+                    goToCard(currentIndex);
+                }
+            }
+            
+            function handleMouseDown(e) {
+                startX = e.clientX;
+                isDragging = true;
+                cardsContainer.style.cursor = 'grabbing';
+            }
+            
+            function handleMouseMove(e) {
+                if (!isDragging) return;
+                const x = e.clientX;
+                const diff = startX - x;
+                
+                // Move the container temporarily during drag
+                cardsContainer.style.transform = `translateX(calc(-${currentIndex * 100}% - ${diff}px))`;
+            }
+            
+            function handleMouseUp(e) {
+                if (!isDragging) return;
+                isDragging = false;
+                cardsContainer.style.cursor = 'grab';
+                
+                const endX = e.clientX;
+                const diff = startX - endX;
+                
+                // Determine if drag was significant enough to change card
+                if (diff > 50 && currentIndex < cards.length - 1) {
+                    // Swipe left - next card
+                    goToCard(currentIndex + 1);
+                } else if (diff < -50 && currentIndex > 0) {
+                    // Swipe right - previous card
+                    goToCard(currentIndex - 1);
+                } else {
+                    // Return to current card
+                    goToCard(currentIndex);
+                }
+            }
+            
+            function goToCard(index) {
+                currentIndex = index;
+                updateCardsPosition();
+                updateDots();
+            }
+            
+            function updateCardsPosition() {
+                cardsContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+            }
+            
+            function updateDots() {
+                dots.forEach((dot, index) => {
+                    if (index === currentIndex) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+            
+            function showToast() {
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+            
+            function shareOnWhatsApp() {
+                const url = window.location.href;
+                const text = "Let's go! Check out our Australia trip itinerary: " + url;
+                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+                window.open(whatsappUrl, '_blank');
+            }
+            
+            // Keyboard navigation for accessibility
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowLeft' && currentIndex > 0) {
+                    goToCard(currentIndex - 1);
+                } else if (e.key === 'ArrowRight' && currentIndex < cards.length - 1) {
+                    goToCard(currentIndex + 1);
+                }
+            });
+            
+            // Prevent page scroll when touching cards container
+            document.body.style.overflow = 'hidden';
+        });
+    </script>
+</body>
+</html>
